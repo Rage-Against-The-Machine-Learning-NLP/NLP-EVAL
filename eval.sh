@@ -1,12 +1,37 @@
 #!/bin/bash
 
-INPUT_DIR="quora/trg" # processed files
+if [ $# -eq 0 ]; then
+    echo "Error: Please provide the input directory name."
+    echo "Usage: $0 <input_directory_name>"
+    exit 1
+fi
 
-REF_FILE="quora/test_trg.txt" # ref file
-
-EXM_DIR="quora/exm" # exm files
+BASE_DIR="$1"
+INPUT_DIR="$BASE_DIR/trg" # processed files
+REF_FILE="$BASE_DIR/test_trg.txt" # ref file
+EXM_DIR="$BASE_DIR/exm" # exm files
 
 PYTHON_SCRIPT="eval.py"
+
+if [ ! -d "$BASE_DIR" ]; then
+    echo "Error: Directory $BASE_DIR does not exist."
+    exit 1
+fi
+
+if [ ! -d "$INPUT_DIR" ]; then
+    echo "Error: Directory $INPUT_DIR does not exist."
+    exit 1
+fi
+
+if [ ! -f "$REF_FILE" ]; then
+    echo "Error: Reference file $REF_FILE does not exist."
+    exit 1
+fi
+
+if [ ! -d "$EXM_DIR" ]; then
+    echo "Error: Directory $EXM_DIR does not exist."
+    exit 1
+fi
 
 if [ ! -f "$PYTHON_SCRIPT" ]; then
     echo "Error: $PYTHON_SCRIPT not found in the current directory."

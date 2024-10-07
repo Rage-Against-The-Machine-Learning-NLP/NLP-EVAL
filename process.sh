@@ -1,8 +1,18 @@
 #!/bin/bash
 
-INPUT_DIR="out/trg"
+if [ $# -eq 0 ]; then
+    echo "Error: Please provide the input directory name."
+    echo "Usage: $0 <input_directory_name>"
+    exit 1
+fi
 
+INPUT_DIR="$1/trg"
 PYTHON_SCRIPT="process.py"
+
+if [ ! -d "$INPUT_DIR" ]; then
+    echo "Error: Directory $INPUT_DIR does not exist."
+    exit 1
+fi
 
 if [ ! -f "$PYTHON_SCRIPT" ]; then
     echo "Error: $PYTHON_SCRIPT not found in the current directory."
