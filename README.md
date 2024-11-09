@@ -1,7 +1,14 @@
-All source code and files are taken from [This Repositry](https://github.com/malllabiisc/SGCP) and we express our gratitude to them.
-
-Since the `apps/` folder script does not work, we had manually searched the files with appropriate versions to make this script run. The link to the same can be found- [Here](https://drive.google.com/drive/folders/1OuYA7ZG2UZaAqBgWfU7vjAq4_V9q3enN?usp=sharing)
-
-1. Make sure to give +x permission to `run.sh`, `eval.sh` and `apps/multi-bleu.perl`
-2. Preprocess the file using `./process.sh <dataset>` (quora/para)
-3. Run `./eval.sh <datset>`
++---------+--------+---------+---------+---------+--------+------------+--------------+
+| L Value |  BLEU  | ROUGE-1 | ROUGE-2 | ROUGE-L | METEOR | Syntax-TED | Template-TED |
++---------+--------+---------+---------+---------+--------+------------+--------------+
+|   0.0   | 40.820 |  68.683 |  48.315 |  70.940 | 42.030 |   6.440    |    7.480     |
+|   0.0   | 42.060 |  69.303 |  49.377 |  71.526 | 42.688 |   6.218    |    7.395     |
+|   0.3   | 47.340 |  71.657 |  53.786 |  73.848 | 47.036 |   5.904    |    7.863     |
+|   0.5   | 46.940 |  71.544 |  53.612 |  73.671 | 46.819 |   6.041    |    7.961     |
+|   0.7   | 47.040 |  71.452 |  53.571 |  73.641 | 46.794 |   6.018    |    7.962     |
+|   1.0   | 46.640 |  71.187 |  53.314 |  73.343 | 47.168 |   6.075    |    8.114     |
+|   1.3   | 46.640 |  71.272 |  52.986 |  73.315 | 47.131 |   6.198    |    8.172     |
+|   1.5   | 45.850 |  70.912 |  52.624 |  73.001 | 46.442 |   6.293    |    8.189     |
+|   1.7   | 46.250 |  70.711 |  52.794 |  72.821 | 46.878 |   6.046    |    8.008     |
+|   2.5   | 45.370 |  70.288 |  52.039 |  72.426 | 45.955 |   6.098    |    7.977     |
++---------+--------+---------+---------+---------+--------+------------+--------------+
