@@ -1,60 +1,70 @@
-import subprocess
-import re
+import os
 from prettytable import PrettyTable
+import re
 
-def extract_metrics(filename):
-    try:
-        cmd = f"grep 'bleu:' {filename}"
-        output = subprocess.check_output(cmd, shell=True).decode('utf-8').strip()
-        
-        match = re.search(r'bleu: ([\d.]+), rouge-1: ([\d.]+), rouge-2: ([\d.]+), rouge-l: ([\d.]+), meteor: ([\d.]+), syntax-TED: ([\d.]+), Template-TED: ([\d.]+)', output)
-        
+def extract_metrics(file_path):
+    with open(file_path, 'r') as f:
+        content = f.read()
+        # Find the line with metrics
+        pattern = r'bleu: ([\d.]+), rouge-1: ([\d.]+), rouge-2: ([\d.]+), rouge-l: ([\d.]+), meteor: ([\d.]+), syntax-TED: ([\d.]+), Template-TED: ([\d.]+)'
+        match = re.search(pattern, content)
         if match:
             return {
-                'bleu': float(match.group(1)),
-                'rouge-1': float(match.group(2)),
-                'rouge-2': float(match.group(3)),
-                'rouge-l': float(match.group(4)),
-                'meteor': float(match.group(5)),
-                'syntax-ted': float(match.group(6)),
-                'template-ted': float(match.group(7))
+                'BLEU': float(match.group(1)),
+                'ROUGE-1': float(match.group(2)),
+                'ROUGE-2': float(match.group(3)),
+                'ROUGE-L': float(match.group(4)),
+                'METEOR': float(match.group(5)),
+                'Syntax-TED': float(match.group(6)),
+                'Template-TED': float(match.group(7))
             }
-    except subprocess.CalledProcessError as e:
-        print(f"Error processing file {filename}: {e}")
     return None
 
-def create_metrics_table():
-    files = ['l_0.001txt', 'l_0.01txt', 'l_0.3txt', 'l_0.5txt', 'l_0.7txt', 'l_1.0txt', 'l_1.3txt', 'l_1.5txt', 'l_1.7txt', 'l_2.5txt']
-    results = {}
-    
-    for file in files:
-        l_val = float(file[2:-3])
-        metrics = extract_metrics(file)
-        if metrics:
-            results[l_val] = metrics
-
-    # Create PrettyTable
+def create_comparison_table(directory, title):
     table = PrettyTable()
-    table.field_names = ["L Value", "BLEU", "ROUGE-1", "ROUGE-2", "ROUGE-L", "METEOR", "Syntax-TED", "Template-TED"]
-    
-    # Set floating point precision
+    table.title = title
+    table.field_names = ["Model", "BLEU", "ROUGE-1", "ROUGE-2", "ROUGE-L", "METEOR", "Syntax-TED", "Template-TED"]
     table.float_format = '.3'
+
+    # Get all files and their metrics
+    results = []
+    for filename in os.listdir(directory):
+        if filename.endswith('.txt'):
+            metrics = extract_metrics(os.path.join(directory, filename))
+            if metrics:
+                model_name = filename.replace('.txt', '')
+                results.append((model_name, metrics))
     
-    # Add rows
-    for l_val in sorted(results.keys()):
-        metrics = results[l_val]
+    # Sort alphabetically by model name
+    results.sort(key=lambda x: x[0].lower())
+    
+    # Add rows to table
+    for model_name, metrics in results:
         table.add_row([
-            f"{l_val:.1f}",
-            metrics['bleu'],
-            metrics['rouge-1'],
-            metrics['rouge-2'],
-            metrics['rouge-l'],
-            metrics['meteor'],
-            metrics['syntax-ted'],
-            metrics['template-ted']
+            model_name,
+            metrics['BLEU'],
+            metrics['ROUGE-1'],
+            metrics['ROUGE-2'],
+            metrics['ROUGE-L'],
+            metrics['METEOR'],
+            metrics['Syntax-TED'],
+            metrics['Template-TED']
         ])
+    
+    return table
 
-    print(table)
+# Create tables for each directory
+directories = {
+    'results/lambda_same': 'Lambda (Same) Comparison',
+    'results/lambda_different': 'Lambda (Different) Comparison',
+    'results/bert': 'BERT Model Comparison',
+    'results/bert_layers': 'BERT Layer Configuration Comparison',
+    'results/quantized': 'Quantization Comparison',
+    'results/seq2seq_variation': 'Seq2Seq Variation Comparison'
+}
 
-if __name__ == "__main__":
-    create_metrics_table()
+for directory, title in directories.items():
+    if os.path.exists(directory):
+        table = create_comparison_table(directory, title)
+        print(table)
+        print("\n" + "="*100 + "\n")
